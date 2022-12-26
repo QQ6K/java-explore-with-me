@@ -1,4 +1,4 @@
-package ru.practicum.admin.users.models;
+package ru.practicum.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
