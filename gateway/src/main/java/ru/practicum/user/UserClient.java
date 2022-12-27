@@ -23,11 +23,25 @@ public class UserClient extends BaseClient {
         );
     }
 
-     public ResponseEntity<Object> create(UserDto userDto) {
+    public ResponseEntity<Object> create(UserDto userDto) {
         return post("", userDto);
     }
 
     public ResponseEntity<Object> delete(Long userId) {
         return delete("/" + userId);
+    }
+
+    public ResponseEntity<Object> get(Long[] ids, Long from, Long size) {
+        String path = null;
+        if (ids != null) {
+            path = "?ids=" + ids;
+        }
+        if (size != null) {
+            path += "&from=" + from;
+        }
+        if (size != null) {
+            path += "&size=" + size;
+        }
+        return get(path, null);
     }
 }

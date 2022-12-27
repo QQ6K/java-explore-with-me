@@ -31,6 +31,14 @@ public class BaseClient {
         return makeAndSendRequest(HttpMethod.DELETE, path, parameters, null);
     }
 
+    protected ResponseEntity<Object> get(String path) {
+        return get(path, null);
+    }
+
+    protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
+        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
+    }
+
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable Map<String, Object> parameters, @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 

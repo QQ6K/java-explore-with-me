@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exceptions.BadRequestException;
 
 import javax.validation.Valid;
 
@@ -29,5 +30,15 @@ public class UserController {
     public ResponseEntity<Object> delete(@PathVariable Long userId) {
         log.info("Запрос 'DELETE /admin/users'");
         return userClient.delete(userId);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findAll(@RequestParam(name = "from", defaultValue = "0") Long from,
+                                          @RequestParam(name = "size", defaultValue = "10") Long size,
+                                          @RequestParam(value = "ids", required = false) Long[] ids) {
+        if (size <= 0 || from < 0) {
+            throw new BadRequestException("Ошибка параметров пагинации");
+        }
+        return userClient.get(ids, from, size);
     }
 }

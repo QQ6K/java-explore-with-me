@@ -1,4 +1,4 @@
-package ru.practicum.admin.users.exceptions;
+package ru.practicum.exceptions;
 
 public class CrudException extends RuntimeException {
     String param;
