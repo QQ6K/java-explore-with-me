@@ -1,6 +1,7 @@
 package ru.practicum.models;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class EventShortDto {
     private Long id;
@@ -15,6 +16,7 @@ public class EventShortDto {
     @NotBlank(message = "Событие должно быть бесплатным или платным")
     private Boolean paid;
     @NotBlank(message = "Пустой заголовок")
+    @Size(min = 3, max = 120, message = "Длина должна быть от {min} до {max} символов")
     private String title;
     private int views;
 }
