@@ -39,6 +39,7 @@ public class UserController {
         if (size <= 0 || from < 0) {
             throw new BadRequestException("Ошибка параметров пагинации");
         }
+        log.info("Запрос ");
         return userClient.get(ids, from, size);
     }
 }

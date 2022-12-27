@@ -32,16 +32,17 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> get(Long[] ids, Long from, Long size) {
-        String path = null;
+        StringBuilder path = new StringBuilder("?");
         if (ids != null) {
-            path = "?ids=" + ids;
+            for (Long id : ids)
+                path.append("ids=").append(id).append("&");
         }
+        if (ids != null && size != null) {
+            path.append("from=").append(from);
+        } else path.append("from=").append(from);
         if (size != null) {
-            path += "&from=" + from;
+            path.append("&size=").append(size);
         }
-        if (size != null) {
-            path += "&size=" + size;
-        }
-        return get(path, null);
+        return get(path.toString(), null);
     }
 }
