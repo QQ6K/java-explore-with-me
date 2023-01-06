@@ -12,7 +12,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompilationDto {
-    private Collection<EventShortDto> events;
+    private Collection<EventShortDto> eventShortDtos;
     @NotNull(message = "id не должно быть null")
     private Long id;
     @NotBlank(message = "Значение 'Закреплено' не определено")

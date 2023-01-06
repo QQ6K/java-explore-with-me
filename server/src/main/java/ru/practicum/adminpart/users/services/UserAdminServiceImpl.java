@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.adminpart.users.interfaces.UserAdminService;
-import ru.practicum.adminpart.users.repositories.UserAdminRepository;
 import ru.practicum.mappers.UserMapper;
 import ru.practicum.models.User;
 import ru.practicum.models.UserDto;
+import ru.practicum.repositories.UserAdminRepository;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private final UserAdminRepository userAdminRepository;
 
     @Override
-    public UserDto addUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         User user = userAdminRepository.save(UserMapper.fromUserDto(userDto));
         log.info("Создание пользователя с id = {}", user.getId());
         return UserMapper.toUserDto(user);

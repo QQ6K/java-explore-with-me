@@ -1,8 +1,15 @@
 package ru.practicum.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class NewEventDto {
     @NotBlank(message = "Пустая аннотация")
     @Size(min = 20, max = 2000, message = "Длина должна быть от {min} до {max} символов")
@@ -17,7 +24,7 @@ public class NewEventDto {
     @NotBlank(message = "Не заполнено место проведения")
     private Location location;
     private Boolean paid;
-    private int participantLimit;
+    private Integer participantLimit;
     private Boolean requestModeration;
     @NotBlank(message = "Пустой заголовок")
     @Size(min = 3, max = 120, message = "Длина должна быть от {min} до {max} символов")

@@ -9,7 +9,6 @@ public class CrudException extends RuntimeException {
         this.param = param;
         this.value = value;
     }
-
     public CrudException(String message) {
         super(message);
     }

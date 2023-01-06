@@ -1,4 +1,4 @@
-package ru.practicum.adminpart.users.repositories;
+package ru.practicum.repositories;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserAdminRepository extends JpaRepository<User, Long> {
+
     Optional<User> findById(Long userId);
 
     @Query("SELECT u FROM User u WHERE u.id IN (:ids)")

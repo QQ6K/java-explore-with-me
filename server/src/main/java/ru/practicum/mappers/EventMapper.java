@@ -1,0 +1,72 @@
+package ru.practicum.mappers;
+
+import ru.practicum.enums.State;
+import ru.practicum.models.*;
+import ru.practicum.publicpart.categories.imp.PublicCategoryServiceImp;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+
+public class EventMapper {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static PublicCategoryServiceImp publicCategoryService;
+
+    public static EventFullDto toFullDto(Event event) {
+        String publishedOn = null;
+        if (event.getPublishedOn() != null) {
+            publishedOn = formatter.format(event.getPublishedOn());
+        }
+        return new EventFullDto(event.getId(),
+                event.getAnnotation(),
+                CategoryMapper.toDto(event.getCategory()),
+                event.getParticipants().size(),
+                formatter.format(event.getCreatedOn()),
+                event.getDescription(),
+                formatter.format(event.getCreatedOn()),
+                UserMapper.toShortDto(event.getInitiator()),
+                event.getLocation(),
+                event.getPaid(),
+                event.getParticipantLimit(),
+                publishedOn,
+                event.getRequestModeration(),
+                event.getState(),
+                event.getTitle(),
+                event.getViews());
+    }
+
+    public static EventShortDto toShortDto(Event event) {
+        return new EventShortDto(event.getId(),
+                event.getAnnotation(),
+                event.getCategory(),
+                event.getEventDate().format(formatter),
+                event.getParticipants().size(),
+                UserMapper.toShortDto(event.getInitiator()),
+                event.getPaid(),
+                event.getTitle(),
+                event.getViews());
+    }
+
+    public static Event toEvent(NewEventDto newEventDto, Category category, User user) {
+        return new Event(0L,
+                newEventDto.getAnnotation(),
+                category,
+                LocalDateTime.now(),
+                newEventDto.getDescription(),
+                LocalDateTime.parse(newEventDto.getEventDate(), formatter),
+                user,
+                newEventDto.getLocation(),
+                newEventDto.getPaid(),
+                newEventDto.getParticipantLimit(),
+                null,
+                newEventDto.getRequestModeration(),
+                State.PENDING,
+                newEventDto.getTitle(),
+                0,
+                Collections.emptyList()
+        );
+    }
+
+}

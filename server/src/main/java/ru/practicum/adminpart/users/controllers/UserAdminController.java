@@ -21,8 +21,8 @@ public class UserAdminController {
     private final UserAdminService userAdminService;
 
     @PostMapping
-    public UserDto addUser(@Valid @RequestBody UserDto userDto) {
-        return userAdminService.addUser(userDto);
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+        return userAdminService.createUser(userDto);
     }
 
     @DeleteMapping("/{userId}")
@@ -31,10 +31,9 @@ public class UserAdminController {
     }
 
     @GetMapping
-    public Collection<UserDto> findAll(@RequestParam(name = "from") Integer from,
+    public Collection<UserDto> findAllUsers(@RequestParam(name = "from") Integer from,
                                        @RequestParam(name = "size") Integer size,
                                        @RequestParam(value = "ids", required = false) Long[] ids) {
-
         Pageable pageable;
         if (size == null || from == null) {
             pageable = Pageable.unpaged();

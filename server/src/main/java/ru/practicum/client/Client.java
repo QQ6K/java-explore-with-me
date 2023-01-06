@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.models.EndpointHitDto;
 
 @Service
 @Slf4j
@@ -14,13 +15,12 @@ public class Client extends ClientForStat {
         super(baseUrl);
     }
 
-
-    public void post(EndpointHit endpointHitDto) {
+    public void post(EndpointHitDto endpointHitDto) {
         ResponseEntity<Object> response = super.post(saveHitEndpoint, endpointHitDto);
         if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Statistic saved: {}", response);
+            log.info("Сбор статистики: {}", response);
         } else {
-            log.error("Error statistic server Http code: {}", response.getStatusCodeValue());
+            log.error("Ошибка : {}", response.getStatusCodeValue());
         }
     }
 }

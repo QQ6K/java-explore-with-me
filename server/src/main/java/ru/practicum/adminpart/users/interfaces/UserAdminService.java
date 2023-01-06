@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface UserAdminService {
 
-    UserDto addUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
     void deleteUser(Long userId);
 

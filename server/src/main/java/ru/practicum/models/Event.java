@@ -32,12 +32,12 @@ public class Event {
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
     private Boolean paid;
-    private int participantLimit;
+    private Integer participantLimit;
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
     private State state;
     private String title;
-    private int views;
+    private Integer views;
     @OneToMany(fetch = FetchType.LAZY)
     private Collection<User> participants;
 }

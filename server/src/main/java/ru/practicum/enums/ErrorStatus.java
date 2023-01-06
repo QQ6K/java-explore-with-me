@@ -1,7 +1,7 @@
 package ru.practicum.enums;
 
 public enum ErrorStatus {
-     CONTINUE,
+    CONTINUE,
     SWITCHING_PROTOCOLS,
     PROCESSING, CHECKPOINT,
     OK,
