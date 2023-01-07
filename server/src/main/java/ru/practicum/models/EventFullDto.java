@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.enums.State;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -16,7 +17,7 @@ public class EventFullDto {
         @NotBlank(message = "Пустая аннотация")
         @Size(min = 20, max = 2000, message = "Длина должна быть от {min} до {max} символов")
         private String annotation;
-        @NotBlank(message = "Пустая категория")
+        @NotNull(message = "Пустая категория")
         private CategoryDto category;
         private Integer confirmedRequests;
         private String createdOn;
@@ -24,9 +25,9 @@ public class EventFullDto {
         private String description;
         @NotBlank(message = "Отсутствует дата события")
         private String eventDate;
-        @NotBlank(message = "Отсутствует инициатор")
+        @NotNull(message = "Отсутствует инициатор")
         private UserShortDto initiator;
-        @NotBlank(message = "Пустая локация")
+        @NotNull(message = "Пустая локация")
         private Location location;
         @NotBlank(message = "Событие должно быть бесплатным или платным")
         private Boolean paid;

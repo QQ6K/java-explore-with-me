@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users/{userId}")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
 public class ParticipationRequestController {
@@ -24,7 +24,7 @@ public class ParticipationRequestController {
         return participationRequestService.findAllByParticipantId(userId);
     }
 
-    @PostMapping("/requests")
+    @PostMapping("/{userId}/requests")
     public ParticipationRequestDto createRequest(
             @PathVariable Long userId,
             @RequestParam Optional<Long> eventId,

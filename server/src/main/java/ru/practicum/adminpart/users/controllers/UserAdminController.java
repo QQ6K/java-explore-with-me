@@ -22,17 +22,19 @@ public class UserAdminController {
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+        log.info("Запрос POST /admin/users");
         return userAdminService.createUser(userDto);
     }
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable("userId") Long userId) {
+        log.info("Запрос DELETE /admin/users/{}", userId);
         userAdminService.deleteUser(userId);
     }
 
     @GetMapping
-    public Collection<UserDto> findAllUsers(@RequestParam(name = "from") Integer from,
-                                       @RequestParam(name = "size") Integer size,
+    public Collection<UserDto> findAllUsers(@RequestParam(name = "from", defaultValue = "0") Integer from,
+                                       @RequestParam(name = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "ids", required = false) Long[] ids) {
         Pageable pageable;
         if (size == null || from == null) {
@@ -41,6 +43,7 @@ public class UserAdminController {
             int page = from / size;
             pageable = PageRequest.of(page, size);
         }
+        log.info("Запрос GET /admin/users c параметрами from = {}, size = {}, ids = {}", from, size, ids);
         return userAdminService.findUsers(ids, pageable);
     }
 }

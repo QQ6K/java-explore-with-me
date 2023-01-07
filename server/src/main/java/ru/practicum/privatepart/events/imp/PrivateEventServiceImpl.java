@@ -13,8 +13,10 @@ import ru.practicum.mappers.EventMapper;
 import ru.practicum.mappers.ParticipationRequestMapper;
 import ru.practicum.models.*;
 import ru.practicum.privatepart.events.interfaces.PrivateEventService;
+import ru.practicum.privatepart.location.interfaces.PrivateLocationService;
 import ru.practicum.publicpart.categories.interfaces.PublicCategoryService;
 import ru.practicum.repositories.EventRepository;
+import ru.practicum.repositories.LocationRepository;
 import ru.practicum.repositories.ParticipationRequestRepository;
 import ru.practicum.repositories.UserAdminRepository;
 
@@ -31,13 +33,17 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class PrivateEventServiceImpl implements PrivateEventService {
 
-    UserAdminRepository userAdminRepository;
+    private final UserAdminRepository userAdminRepository;
 
-    EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    PublicCategoryService publicCategoryService;
+    private final ParticipationRequestRepository participationRequestRepository;
 
-    ParticipationRequestRepository participationRequestRepository;
+    private final PublicCategoryService publicCategoryService;
+
+    private final PrivateLocationService privateLocationService;
+
+    private final LocationRepository locationRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -95,6 +101,10 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         User user = userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
         Category category = publicCategoryService.getCategoryById(newEventDto.getCategory());
+        Location location = locationRepository.findByLatAndLon(newEventDto.getLocation().getLat(), newEventDto.getLocation().getLon());
+        if (location == null) {
+            privateLocationService.createLocation(newEventDto.getLocation());
+        }
         Event event = EventMapper.toEvent(newEventDto, category, user);
         event = eventRepository.save(event);
         log.debug("Создано событие id={} ", event.getId());
@@ -148,7 +158,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!participationRequest.getState().equals(State.PENDING)) {
             throw new CrudException("Неподходящий статус заявки");
         }
-        if (!participationRequest.getEvent().equals(event.getId())) {
+        if (participationRequest.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Несовпадение id событий");
         }
         if (event.getParticipantLimit() == event.getParticipants().size()) {
@@ -172,7 +182,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new WrongObjectException("События не существует id = " + eventId));
 
-        if (!participationRequest.getEvent().equals(event.getId())) {
+        if (participationRequest.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Несовпадение id событий");
         }
         if (!participationRequest.getState().equals(State.PENDING)) {
@@ -192,4 +202,19 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         return ParticipationRequestMapper
                 .toParticipationRequestDto(participationRequestRepository.save(participationRequest));
     }
+
+    @Override
+    public List<ParticipationRequestDto> findRequestByUserIdAndEventId(Long userId, Long eventId) {
+        User user = userAdminRepository.findById(userId).orElseThrow(() ->
+                new WrongObjectException("Пользователя не существует id = " + userId));
+        Event event = this.findById(eventId);
+        if (user.equals(event.getInitiator())) {
+            log.debug("Посик заявок на участие в событии id = {} пользователя id = {}", eventId, userId);
+            return participationRequestRepository.findByEventInitiatorIdAndEventId(userId, eventId).stream()
+                    .map(ParticipationRequestMapper::toParticipationRequestDto).collect(Collectors.toList());
+        } else {
+            throw new WrongObjectException("Пользователь не инициатор события!");
+        }
+    }
+
 }

@@ -18,8 +18,9 @@ import ru.practicum.privatepart.participationRequest.interfaces.ParticipationReq
 import ru.practicum.repositories.ParticipationRequestRepository;
 import ru.practicum.repositories.UserAdminRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,11 +32,13 @@ import static ru.practicum.enums.State.CANCELED;
 @Transactional(readOnly = true)
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
-    ParticipationRequestRepository participationRequestRepository;
+    private final ParticipationRequestRepository participationRequestRepository;
 
-    PrivateEventService privateEventService;
+    private final PrivateEventService privateEventService;
 
-    UserAdminRepository userAdminRepository;
+    private final UserAdminRepository userAdminRepository;
+
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public ParticipationRequest findByRequestId(Long requestId) {
@@ -58,12 +61,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         User user = userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
         Event event = privateEventService.findById(
-                eventId.orElseThrow(() -> new BadRequestException("Отсутствует событие id = {}" + eventId))
-        );
+                eventId.orElseThrow(() -> new BadRequestException("Отсутствует событие id = {}" + eventId)));
         if (event.getInitiator().getId().equals(userId)) {
             throw new CrudException("id = " + userId + " инициатора события и запрашивающего совпадают");
         }
-        if (participationRequestRepository.existsByEvent_IdAndRequesterId(event.getId(), userId)) {
+        if (participationRequestRepository.findByEvent_IdAndRequesterId(event.getId(), userId) != null) {
             throw new BadRequestException("Запрос совпадает с ранее созданным");
         }
         if (!event.getState().equals(State.PUBLISHED)) {
@@ -74,9 +76,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
         ParticipationRequest participationRequest = new ParticipationRequest();
         participationRequest.setRequester(user);
-        participationRequest.setState(State.CONFIRMED);
+        participationRequest.setState(State.PENDING);
         participationRequest.setEvent(event);
-
+        participationRequest.setCreated(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter));
         participationRequest = participationRequestRepository.save(participationRequest);
         log.debug("Создана заявка на участие id={}", participationRequest.getId());
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);

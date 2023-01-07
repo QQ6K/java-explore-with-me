@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -14,7 +15,7 @@ public class EventShortDto {
     private Long id;
     @NotBlank(message = "Пустая аннотация")
     private String annotation;
-    @NotBlank(message = "Пустая категория")
+    @NotNull(message = "Пустая категория")
     private Category category;
     @NotBlank(message = "Отсутствует дата события")
     private String eventDate;

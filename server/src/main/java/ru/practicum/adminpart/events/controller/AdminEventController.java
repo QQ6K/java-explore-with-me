@@ -10,7 +10,6 @@ import ru.practicum.models.AdminUpdateEventRequest;
 import ru.practicum.models.EventFullDto;
 
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,16 +26,19 @@ public class AdminEventController {
     @PutMapping("/{eventId}")
     public EventFullDto updateEvent(@Positive @PathVariable("eventId") Long eventId,
                                     @RequestBody AdminUpdateEventRequest adminUpdateEventRequest) {
+        log.info("Запрос PUT /admin/events/{}", eventId);
         return adminEventService.updateEventRequest(eventId, adminUpdateEventRequest);
     }
 
     @PatchMapping("/{eventId}/publish")
     public EventFullDto publishEvent(@Positive @PathVariable Long eventId) {
+        log.info("Запрос PATCH /admin/events/{}/publish", eventId);
         return adminEventService.publishEvent(eventId);
     }
 
     @PatchMapping("/{eventId}/reject")
     public EventFullDto rejectEvent(@Positive @PathVariable Long eventId) {
+        log.info("Запрос PATCH /admin/events/{}/reject", eventId);
         return adminEventService.rejectEvent(eventId);
     }
 
@@ -46,8 +48,11 @@ public class AdminEventController {
                                             @RequestParam(value = "categories", required = false) Long[] categories,
                                             @RequestParam(value = "rangeStart", required = false) String rangeStartString,
                                             @RequestParam(value = "rangeEnd", required = false) String rangeEndString,
-                                            @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                            @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        log.info("Запрос PATCH /admin/events с параметрами users = {}, states = {}, categories = {}," +
+                        " rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
+                users, states, categories, rangeStartString, rangeEndString, from, size);
         Pageable pageable;
         if (size == null || from == null) {
             pageable = Pageable.unpaged();
@@ -55,8 +60,15 @@ public class AdminEventController {
             int page = from / size;
             pageable = PageRequest.of(page, size);
         }
-        LocalDateTime rangeStart = LocalDateTime.parse(rangeStartString,formatter);
-        LocalDateTime rangeEnd = LocalDateTime.parse(rangeEndString,formatter);
+        LocalDateTime rangeStart;
+        LocalDateTime rangeEnd;
+        if (rangeEndString != null && rangeStartString != null) {
+            rangeStart = LocalDateTime.parse(rangeStartString, formatter);
+            rangeEnd = LocalDateTime.parse(rangeEndString, formatter);
+        } else {
+            rangeEnd = null;
+            rangeStart = null;
+        }
         return adminEventService.findAllEvents(users, states, categories,
                 rangeStart, rangeEnd, pageable);
     }

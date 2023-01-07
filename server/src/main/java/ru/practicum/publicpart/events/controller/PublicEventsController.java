@@ -8,13 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.enums.SortEvent;
-import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.models.EventFullDto;
 import ru.practicum.models.EventShortDto;
 import ru.practicum.publicpart.events.interfaces.PublicEventsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+
+import static ru.practicum.enums.SortEvent.EVENT_DATE;
+import static ru.practicum.enums.SortEvent.VIEWS;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,36 +29,46 @@ public class PublicEventsController {
     @GetMapping("/{id}")
     public EventFullDto findById(HttpServletRequest request,
                                  @PathVariable("id") Long id) {
+        log.info("Запрос GET /events/{}", id);
         return publicEventsService.findById(id, request.getRequestURI(), request.getRemoteAddr());
     }
 
     @GetMapping
     public Collection<EventShortDto> findEvents(HttpServletRequest request,
-                                                @RequestParam("text") String text,
+                                                @RequestParam(value = "text") String text,
                                                 @RequestParam(value = "categories", required = false) Long[] categories,
                                                 @RequestParam(value = "paid", required = false) Boolean paid,
                                                 @RequestParam(value = "rangeStart", required = false) String rangeStart,
                                                 @RequestParam(value = "rangeEnd", required = false) String rangeEnd,
-                                                @RequestParam("onlyAvailable") Boolean onlyAvailable,
-                                                @RequestParam("sort") String sort,
+                                                @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
+                                                @RequestParam(value = "sort", required = false) String sort,
                                                 @RequestParam(value = "from", defaultValue = "0") Integer from,
                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        log.info("Запрос GET /events с параметрами  text = {}, categories = {}, paid = {}, rangeStart = {}," +
+                        "rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         String clientIp = request.getRemoteAddr();
         String endpointPath = request.getRequestURI();
+        Pageable pageable;
 
-        if (from == null || size == null) {
-            return null;
+        if (size == null || from == null) {
+            pageable = Pageable.unpaged();
         } else {
-            if (from < 0 || size <= 0) {
-                throw new BadRequestException("Значения пагинации меньше 0");
-            }
-            SortEvent sortEvent = SortEvent.from(sort);
-            Sort sortPageable = Sort.by(sortEvent.name()).descending();
-            Pageable pageable = PageRequest.of(from / size, size, sortPageable);
-
-
-            return publicEventsService.findEvents(text, categories, paid, rangeStart, rangeEnd,
-                    onlyAvailable, pageable, clientIp, endpointPath);
+            int page = from / size;
+            Sort sortPageable;
+            if (sort != null) {
+                SortEvent sortEvent = SortEvent.from(sort);
+                if (sortEvent == EVENT_DATE) {
+                    sort = "eventDate";
+                } else if (sortEvent == VIEWS) {
+                    sort = "view";
+                }
+                sortPageable = Sort.by(sort).descending();
+                pageable = PageRequest.of(page, size, sortPageable);
+            } else pageable = PageRequest.of(page, size);
         }
+        return publicEventsService.findEvents(text, categories, paid, rangeStart, rangeEnd,
+                onlyAvailable, pageable, clientIp, endpointPath);
+
     }
 }

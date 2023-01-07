@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.models.*;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping(path = "/users/{userId}/events")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class PrivateEventController {
     private final PrivateEventService privateEventService;
 
@@ -37,7 +39,7 @@ public class PrivateEventController {
             int page = from / size;
             pageable = PageRequest.of(page, size);
         }
-        log.info("Запрос GET /users/{}/events", userId);
+        log.info("Запрос GET /users/{}/events с параметрами from = {}, size = {}", userId, from, size);
         return privateEventService.findEventsByUserId(userId, pageable);
     }
 
@@ -53,12 +55,12 @@ public class PrivateEventController {
 
     @PostMapping
     public EventFullDto createEvent(
-            @Valid @RequestBody NewEventDto eventDto,
+            @Valid @RequestBody NewEventDto newEventDto,
             @PathVariable Long userId,
             HttpServletRequest request
     ) {
         log.info("Запрос POST /users/{}/events", userId);
-        return privateEventService.createEvent(eventDto, userId);
+        return privateEventService.createEvent(newEventDto, userId);
     }
 
     @GetMapping("/{eventId}")
@@ -80,7 +82,16 @@ public class PrivateEventController {
         return privateEventService.cancelEventById(eventId, userId);
     }
 
-    @PatchMapping("/events/{eventId}/requests/{reqId}/confirm")
+    @GetMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> findRequestByUserIdAndEventId(
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            HttpServletRequest request) {
+        log.info("Запрос GET /users/{}/events/{}/requests", userId, eventId);
+        return privateEventService.findRequestByUserIdAndEventId(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests/{reqId}/confirm")
     public ParticipationRequestDto confirmParticipationRequest(
             @PathVariable Long userId,
             @PathVariable Long eventId,

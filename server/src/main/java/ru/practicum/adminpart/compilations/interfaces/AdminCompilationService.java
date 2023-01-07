@@ -4,7 +4,7 @@ import ru.practicum.models.Compilation;
 import ru.practicum.models.CompilationDto;
 import ru.practicum.models.NewCompilationDto;
 
-public interface CompilationService {
+public interface AdminCompilationService {
     Compilation findById(Long compId);
 
     CompilationDto createCompilation(NewCompilationDto compilationDto);

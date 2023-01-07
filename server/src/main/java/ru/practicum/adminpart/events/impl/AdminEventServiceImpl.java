@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.adminpart.events.interfaces.AdminEventService;
+import ru.practicum.enums.State;
 import ru.practicum.exceptions.CrudException;
 import ru.practicum.mappers.EventMapper;
 import ru.practicum.models.AdminUpdateEventRequest;
@@ -16,6 +17,7 @@ import ru.practicum.repositories.EventRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +31,6 @@ import static ru.practicum.enums.State.*;
 public class AdminEventServiceImpl implements AdminEventService {
     private final EventRepository eventRepository;
     private final PublicCategoryService publicCategoryService;
-    //private final LocationService locationService;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -89,13 +90,26 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Override
     public List<EventFullDto> findAllEvents(Long[] users, String[] states, Long[] categories,
                                             LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable) {
-        if (rangeStart.isAfter(rangeEnd)) {
-            throw new CrudException("Старт после завершения");
+        List<Event> events;
+        List<State> statesEnum = null;
+        if (states != null) {
+            statesEnum = Arrays.stream(states).map(State::from)
+                    .map(s -> s.orElseThrow(() -> new IllegalArgumentException("Неизвестный статус: " + s)))
+                    .collect(Collectors.toList());
+        }
+        if (rangeStart != null && rangeEnd != null) {
+            if (rangeStart.isAfter(rangeEnd)) {
+                throw new CrudException("Старт после завершения");
+            }
+            events = eventRepository.findAllEventsAdmin(users, categories,
+                            statesEnum, rangeStart, rangeEnd, pageable)
+                    .toList();
+        } else {
+            events = eventRepository.findAllEventsAdminNotRange(users, categories,
+                            statesEnum, pageable)
+                    .toList();
         }
         log.debug("Поиск всех событий");
-        List<Event> events = eventRepository.findAllEventsAdmin(users, categories,
-                        states, rangeStart, rangeEnd, pageable)
-                .toList();
         return events.stream().map(EventMapper::toFullDto).collect(Collectors.toList());
     }
 

@@ -32,4 +32,6 @@ public interface PrivateEventService {
 
     @Transactional
     ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId);
+
+    List<ParticipationRequestDto> findRequestByUserIdAndEventId(Long userId, Long eventId);
 }

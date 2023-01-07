@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserShortDto {
+public class  UserShortDto {
     @NotNull(message = "Пустое значение id")
     private Long id;
     @NotBlank(message = "Пустое имя")

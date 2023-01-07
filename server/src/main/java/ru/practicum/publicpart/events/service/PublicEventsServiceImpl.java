@@ -23,7 +23,7 @@ import java.util.Collection;
 @Slf4j
 public class PublicEventsServiceImpl implements PublicEventsService {
     private final Client client;
-    EventRepository eventRepository;
+    private final EventRepository eventRepository;
     @Value("${app.name}")
     private String appName;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -32,7 +32,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     public EventFullDto findById(Long eventId, String requestURI, String remoteAddr) {
         EndpointHitDto endpointHitDto = new EndpointHitDto(null, appName, requestURI, remoteAddr,
                 formatter.format(LocalDateTime.now()));
-        client.post(endpointHitDto);
+        //client.post(endpointHitDto);
         log.debug("найти событие id={}", eventId);
         return EventMapper.toFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new CrudException("id = " + eventId)));
@@ -45,13 +45,16 @@ public class PublicEventsServiceImpl implements PublicEventsService {
                                                 String rangeStartString,
                                                 String rangeEndString,
                                                 Boolean onlyAvailable,
-
                                                 Pageable pageable,
                                                 String clientIp,
                                                 String endpointPath) {
-        LocalDateTime rangeStart = LocalDateTime.parse(rangeStartString, formatter);
-        LocalDateTime rangeEnd = LocalDateTime.parse(rangeEndString, formatter);
-        if (onlyAvailable) {
+        LocalDateTime rangeStart = null;
+        LocalDateTime rangeEnd = null;
+        if (rangeStartString != null && rangeEndString != null) {
+            rangeStart = LocalDateTime.parse(rangeStartString, formatter);
+            rangeEnd = LocalDateTime.parse(rangeEndString, formatter);
+        }
+       /* if (onlyAvailable) {
             EndpointHitDto endpointHitDto = new EndpointHitDto(null, appName, endpointPath, clientIp,
                     formatter.format(LocalDateTime.now()));
             try {
@@ -70,10 +73,10 @@ public class PublicEventsServiceImpl implements PublicEventsService {
                 client.post(endpointHitDto);
             } catch (RuntimeException e) {
                 log.error(e.getMessage());
-            }
+            }*/
             return eventRepository.findAllForPublic(text, catIds, paid,
                             rangeStart, rangeEnd, pageable).map(EventMapper::toShortDto)
                     .toList();
         }
-    }
+    //}
 }

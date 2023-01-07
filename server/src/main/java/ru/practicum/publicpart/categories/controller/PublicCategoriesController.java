@@ -25,11 +25,8 @@ public class PublicCategoriesController {
         return publicCategoryService.getCategoryDtoById(catId);
     }
 
-    public List<CategoryDto> findAllCategories(
-            @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "20") Integer size,
-            HttpServletRequest request
-    ) {
+    @GetMapping
+    public List<CategoryDto> findAllCategories(@RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "20") Integer size, HttpServletRequest request) {
         Pageable pageable;
         if (size == null || from == null) {
             pageable = Pageable.unpaged();

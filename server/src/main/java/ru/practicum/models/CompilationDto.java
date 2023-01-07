@@ -12,11 +12,12 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompilationDto {
-    private Collection<EventShortDto> eventShortDtos;
     @NotNull(message = "id не должно быть null")
     private Long id;
-    @NotBlank(message = "Значение 'Закреплено' не определено")
-    private Boolean pinned;
     @NotBlank(message = "Пустой заголовок")
     private String title;
+    @NotNull(message = "Значение 'Закреплено' не определено")
+    private Boolean pinned;
+    private Collection<EventShortDto> events;
+
 }

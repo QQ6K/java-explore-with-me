@@ -2,13 +2,13 @@ package ru.practicum.adminpart.categories.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.adminpart.categories.impl.AdminCategoryServiceImpl;
 import ru.practicum.models.CategoryDto;
 import ru.practicum.models.NewCategoryDto;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/admin/categories")
@@ -19,7 +19,7 @@ public class AdminCategoryController {
 
     @PostMapping
     public CategoryDto createCategory(
-            @Validated @RequestBody NewCategoryDto newCategoryDto,
+            @RequestBody @Valid NewCategoryDto newCategoryDto,
             HttpServletRequest request
     ) {
         log.info("Запрос POST /admin/categories");
@@ -28,7 +28,7 @@ public class AdminCategoryController {
 
     @PatchMapping
     public CategoryDto updateCategory(
-            @Validated @RequestBody CategoryDto categoryDto,
+            @RequestBody @Valid CategoryDto categoryDto,
             HttpServletRequest request
     ) {
         log.info("Запрос PATCH /admin/categories");

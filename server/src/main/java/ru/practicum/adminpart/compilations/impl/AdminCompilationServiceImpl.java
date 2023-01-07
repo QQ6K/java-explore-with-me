@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.adminpart.compilations.interfaces.CompilationService;
+import ru.practicum.adminpart.compilations.interfaces.AdminCompilationService;
 import ru.practicum.adminpart.events.interfaces.AdminEventService;
 import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.CrudException;
@@ -25,13 +25,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class CompilationServiceImpl implements CompilationService {
+public class AdminCompilationServiceImpl implements AdminCompilationService {
 
-    PrivateEventService privateEventService;
+    private final AdminEventService adminEventService;
 
-    AdminEventService adminEventService;
-
-    CompilationRepository compilationRepository;
+    private final CompilationRepository compilationRepository;
 
     @Override
     public Compilation findById(Long compId) {

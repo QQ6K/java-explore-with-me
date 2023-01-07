@@ -36,12 +36,12 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     public Collection<UserDto> findUsers(Long[] ids, Pageable pageable) {
         if (ids != null) {
-            log.info("Поиск пользователей с id = {}" + ids);
+            log.debug("Поиск пользователей с id = {}", ids);
             return userAdminRepository.findAllById(Arrays.asList(ids), pageable).stream()
                     .map(UserMapper::toUserDto)
                     .collect(Collectors.toList());
         } else {
-            log.info("Поиск всех пользователей");
+            log.debug("Поиск всех пользователей");
             return userAdminRepository.findAll(pageable).stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());}

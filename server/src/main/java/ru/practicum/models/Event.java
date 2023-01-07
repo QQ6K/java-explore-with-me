@@ -3,6 +3,7 @@ package ru.practicum.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.WhereJoinTable;
 import ru.practicum.enums.State;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class Event {
     private Category category;
     private LocalDateTime createdOn;
     private String description;
+    @JoinColumn(name = "event_date")
     private LocalDateTime eventDate;
     @ManyToOne
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
@@ -38,6 +40,11 @@ public class Event {
     private State state;
     private String title;
     private Integer views;
-    @OneToMany(fetch = FetchType.LAZY)
+
+    @WhereJoinTable(clause = "state='CONFIRMED'")
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "requests",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "requester_id"))
     private Collection<User> participants;
 }

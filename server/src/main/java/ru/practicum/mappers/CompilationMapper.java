@@ -12,15 +12,13 @@ import java.util.stream.Collectors;
 public class CompilationMapper {
 
     public static CompilationDto toDto(Compilation compilation) {
-        return new CompilationDto(compilation.getEvents().stream()
-                .map(EventMapper::toShortDto).collect(Collectors.toList()),
-                compilation.getId(),
-                compilation.getPinned(),
-                compilation.getTitle());
+        return new CompilationDto(compilation.getId(), compilation.getTitle(), compilation.getPinned(), compilation.getEvents().stream()
+                .map(EventMapper::toShortDto).collect(Collectors.toList())
+        );
     }
 
     public static Compilation toCompilation(NewCompilationDto newCompilationDto, List<Event> events) {
-        return new Compilation(events, 0L, Optional.ofNullable(newCompilationDto.getPinned()).orElse(false), newCompilationDto.getTitle());
+        return new Compilation(0L, newCompilationDto.getTitle(), Optional.ofNullable(newCompilationDto.getPinned()).orElse(false), events);
 
     }
 }

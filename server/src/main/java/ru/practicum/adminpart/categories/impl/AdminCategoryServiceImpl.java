@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.adminpart.categories.interfaces.AdminCategoryService;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.WrongObjectException;
 import ru.practicum.mappers.CategoryMapper;
 import ru.practicum.models.Category;
@@ -19,9 +20,9 @@ import ru.practicum.repositories.EventRepository;
 @Transactional(readOnly = true)
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -46,7 +47,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Transactional
     public CategoryDto updateCategory(CategoryDto categoryDto) {
         Category category = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new WrongObjectException("Категория не найдена id =" + categoryDto.getId()));
+                .orElseThrow(() -> new BadRequestException("Категория не найдена id =" + categoryDto.getId()));
         category.setName(categoryDto.getName());
         categoryRepository.save(category);
         log.debug("Изменение категории id={}", category.getId());

@@ -2,7 +2,6 @@ package ru.practicum.mappers;
 
 import ru.practicum.enums.State;
 import ru.practicum.models.*;
-import ru.practicum.publicpart.categories.imp.PublicCategoryServiceImp;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,8 +10,6 @@ import java.util.Collections;
 public class EventMapper {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    private static PublicCategoryServiceImp publicCategoryService;
 
     public static EventFullDto toFullDto(Event event) {
         String publishedOn = null;
@@ -25,7 +22,7 @@ public class EventMapper {
                 event.getParticipants().size(),
                 formatter.format(event.getCreatedOn()),
                 event.getDescription(),
-                formatter.format(event.getCreatedOn()),
+                formatter.format(event.getEventDate()),
                 UserMapper.toShortDto(event.getInitiator()),
                 event.getLocation(),
                 event.getPaid(),
@@ -53,7 +50,7 @@ public class EventMapper {
         return new Event(0L,
                 newEventDto.getAnnotation(),
                 category,
-                LocalDateTime.now(),
+                LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter),
                 newEventDto.getDescription(),
                 LocalDateTime.parse(newEventDto.getEventDate(), formatter),
                 user,
