@@ -103,7 +103,6 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{eventId}/requests/{reqId}/reject")
-    @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto rejectParticipationRequest(
             @PathVariable Long userId,
             @PathVariable Long eventId,

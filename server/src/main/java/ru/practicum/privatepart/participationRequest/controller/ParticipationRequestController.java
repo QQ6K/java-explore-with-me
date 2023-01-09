@@ -2,7 +2,6 @@ package ru.practicum.privatepart.participationRequest.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.models.ParticipationRequestDto;
 import ru.practicum.privatepart.participationRequest.interfaces.ParticipationRequestService;
@@ -35,7 +34,6 @@ public class ParticipationRequestController {
     }
 
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto cancelRequestByUser(
             @PathVariable Long userId,
             @PathVariable Long requestId,

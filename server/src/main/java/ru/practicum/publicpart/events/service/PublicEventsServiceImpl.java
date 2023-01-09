@@ -14,6 +14,8 @@ import ru.practicum.models.EventShortDto;
 import ru.practicum.publicpart.events.interfaces.PublicEventsService;
 import ru.practicum.repositories.EventRepository;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -32,7 +34,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     public EventFullDto findById(Long eventId, String requestURI, String remoteAddr) {
         EndpointHitDto endpointHitDto = new EndpointHitDto(null, appName, requestURI, remoteAddr,
                 formatter.format(LocalDateTime.now()));
-        //client.post(endpointHitDto);
+        client.post(endpointHitDto);
         log.debug("найти событие id={}", eventId);
         return EventMapper.toFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new CrudException("id = " + eventId)));
@@ -51,10 +53,10 @@ public class PublicEventsServiceImpl implements PublicEventsService {
         LocalDateTime rangeStart = null;
         LocalDateTime rangeEnd = null;
         if (rangeStartString != null && rangeEndString != null) {
-            rangeStart = LocalDateTime.parse(rangeStartString, formatter);
-            rangeEnd = LocalDateTime.parse(rangeEndString, formatter);
+            rangeStart = LocalDateTime.parse(URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8), formatter);
+            rangeEnd = LocalDateTime.parse(URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8), formatter);
         }
-       /* if (onlyAvailable) {
+        if (onlyAvailable) {
             EndpointHitDto endpointHitDto = new EndpointHitDto(null, appName, endpointPath, clientIp,
                     formatter.format(LocalDateTime.now()));
             try {
@@ -73,10 +75,10 @@ public class PublicEventsServiceImpl implements PublicEventsService {
                 client.post(endpointHitDto);
             } catch (RuntimeException e) {
                 log.error(e.getMessage());
-            }*/
-            return eventRepository.findAllForPublic(text, catIds, paid,
+            }
+            return eventRepository.findAllForPublic(URLDecoder.decode(text,StandardCharsets.UTF_8), catIds, paid,
                             rangeStart, rangeEnd, pageable).map(EventMapper::toShortDto)
                     .toList();
         }
-    //}
+    }
 }

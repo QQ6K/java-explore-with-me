@@ -16,21 +16,29 @@ public class EndpointHitServiceImpl implements EndpointHitService{
     private final EndpointHitRepository repository;
     @Value("${app.name}")
     private String appName;
-    /*@Value("http://localhost:7070")
-    private String urlMainService;*/
 
     @Override
-    public EndpointHitDto save(EndpointHitDto endpointHitDto) {
-        return EndpointHitMapper.toDto(repository.save(EndpointHitMapper.fromDto(endpointHitDto)));
+    public EndpointHitDto create(EndpointHitDto endpointHitDto) {
+        EndpointHitDto dto = StatMapper.toDto(repository.save(StatMapper.fromDto(endpointHitDto)));
+        log.info("Сохранение endpointHitDto: id = {}, ip = {}, URI = {}, time = {}, app = {}",
+                dto.getId(), dto.getIp(), dto.getTimestamp(), dto.getTimestamp(), dto.getApp());
+        return dto;
     }
 
     @Override
     public Collection<ViewStatsDto> getStat(ParametersDto parametersDto) {
-        Parameters parameters = EndpointHitMapper.fromParametersDto(parametersDto);
+        Parameters parameters = StatMapper.fromParametersDto(parametersDto);
+        log.info("Получение статистики");
         if (parameters.getUnique()) {
-            return parameters.getUris().stream().map(uri -> new ViewStatsDto(appName, uri, repository.getHitCountUnique(parameters.getStart(), parameters.getEnd(), uri))).collect(Collectors.toList());
+            return parameters.getUris().stream().map(uri -> StatMapper
+                            .fromViewStatsToDto(new ViewStats(appName, uri, repository
+                                    .getHitCountUnique(parameters.getStart(), parameters.getEnd(), uri))))
+                    .collect(Collectors.toList());
         } else {
-            return parameters.getUris().stream().map(uri -> new ViewStatsDto(appName, uri, repository.getHitCountAll(parameters.getStart(), parameters.getEnd(), uri))).collect(Collectors.toList());
+            return parameters.getUris().stream().map(uri -> StatMapper
+                            .fromViewStatsToDto(new ViewStats(appName, uri, repository
+                                    .getHitCountAll(parameters.getStart(), parameters.getEnd(), uri))))
+                    .collect(Collectors.toList());
         }
     }
 }

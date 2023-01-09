@@ -13,6 +13,8 @@ import ru.practicum.models.EventShortDto;
 import ru.practicum.publicpart.events.interfaces.PublicEventsService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import static ru.practicum.enums.SortEvent.EVENT_DATE;
@@ -40,13 +42,14 @@ public class PublicEventsController {
                                                 @RequestParam(value = "paid", required = false) Boolean paid,
                                                 @RequestParam(value = "rangeStart", required = false) String rangeStart,
                                                 @RequestParam(value = "rangeEnd", required = false) String rangeEnd,
-                                                @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
+                                                @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                                 @RequestParam(value = "sort", required = false) String sort,
                                                 @RequestParam(value = "from", defaultValue = "0") Integer from,
                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
         log.info("Запрос GET /events с параметрами  text = {}, categories = {}, paid = {}, rangeStart = {}," +
                         "rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                URLDecoder.decode(text,StandardCharsets.UTF_8),
+                categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         String clientIp = request.getRemoteAddr();
         String endpointPath = request.getRequestURI();
         Pageable pageable;
@@ -67,7 +70,9 @@ public class PublicEventsController {
                 pageable = PageRequest.of(page, size, sortPageable);
             } else pageable = PageRequest.of(page, size);
         }
-        return publicEventsService.findEvents(text, categories, paid, rangeStart, rangeEnd,
+        return publicEventsService.findEvents(
+                URLDecoder.decode(text, StandardCharsets.UTF_8),
+                categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, pageable, clientIp, endpointPath);
 
     }

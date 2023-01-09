@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "endpointhit")
@@ -16,12 +17,12 @@ public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
+
     private String app;
     @NonNull
     private String uri;
     @NonNull
     private String ip;
     @NonNull
-    private Long timestamp;
+    private LocalDateTime timestamp;
 }

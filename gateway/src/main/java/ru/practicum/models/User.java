@@ -1,4 +1,4 @@
-package ru.practicum.user;
+package ru.practicum.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class User {
         private Long id;
-        private String name;
         private String email;
+        private String name;
 }

@@ -158,7 +158,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!participationRequest.getState().equals(State.PENDING)) {
             throw new CrudException("Неподходящий статус заявки");
         }
-        if (participationRequest.getEvent().getId().equals(event.getId())) {
+        if (!participationRequest.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Несовпадение id событий");
         }
         if (event.getParticipantLimit() == event.getParticipants().size()) {
@@ -182,7 +182,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new WrongObjectException("События не существует id = " + eventId));
 
-        if (participationRequest.getEvent().getId().equals(event.getId())) {
+        if (!participationRequest.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Несовпадение id событий");
         }
         if (!participationRequest.getState().equals(State.PENDING)) {

@@ -15,6 +15,10 @@ public class BaseClient {
         this.rest = rest;
     }
 
+    protected <T> ResponseEntity<Object> post(String path) {
+        return post(path, null);
+    }
+
     protected <T> ResponseEntity<Object> post(String path, T body) {
         return post(path, null, body);
     }
@@ -39,6 +43,30 @@ public class BaseClient {
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
 
+    protected <T> ResponseEntity<Object> patch(String path, T body) {
+        return patch(path,  null, body);
+    }
+
+    protected <T> ResponseEntity<Object> patch(String path) {
+        return patch(path, null, null);
+    }
+
+    protected <T> ResponseEntity<Object> patch(String path, @Nullable Map<String, Object> parameters, T body) {
+        return makeAndSendRequest(HttpMethod.PATCH, path, parameters, body);
+    }
+
+    protected <T> ResponseEntity<Object> put(String path) {
+        return put(path, null);
+    }
+
+    protected <T> ResponseEntity<Object> put(String path, T body) {
+        return put(path, null, body);
+    }
+
+    protected <T> ResponseEntity<Object> put(String path, @Nullable Map<String, Object> parameters, T body) {
+        return makeAndSendRequest(HttpMethod.PUT, path, parameters, body);
+    }
+
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable Map<String, Object> parameters, @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
@@ -58,7 +86,7 @@ public class BaseClient {
     private HttpHeaders defaultHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));;
         return headers;
     }
 

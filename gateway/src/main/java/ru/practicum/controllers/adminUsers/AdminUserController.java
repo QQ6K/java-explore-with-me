@@ -1,4 +1,4 @@
-package ru.practicum.user;
+package ru.practicum.controllers.adminUsers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.exceptions.BadRequestException;
+import ru.practicum.models.UserDto;
 
 import javax.validation.Valid;
 
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
+public class AdminUserController {
     private final UserClient userClient;
 
     @ResponseBody

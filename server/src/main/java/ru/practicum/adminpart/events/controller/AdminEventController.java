@@ -10,6 +10,8 @@ import ru.practicum.models.AdminUpdateEventRequest;
 import ru.practicum.models.EventFullDto;
 
 import javax.validation.constraints.Positive;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -50,9 +52,7 @@ public class AdminEventController {
                                             @RequestParam(value = "rangeEnd", required = false) String rangeEndString,
                                             @RequestParam(value = "from", defaultValue = "0") Integer from,
                                             @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        log.info("Запрос PATCH /admin/events с параметрами users = {}, states = {}, categories = {}," +
-                        " rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
-                users, states, categories, rangeStartString, rangeEndString, from, size);
+
         Pageable pageable;
         if (size == null || from == null) {
             pageable = Pageable.unpaged();
@@ -63,12 +63,15 @@ public class AdminEventController {
         LocalDateTime rangeStart;
         LocalDateTime rangeEnd;
         if (rangeEndString != null && rangeStartString != null) {
-            rangeStart = LocalDateTime.parse(rangeStartString, formatter);
-            rangeEnd = LocalDateTime.parse(rangeEndString, formatter);
+            rangeStart = LocalDateTime.parse(URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8), formatter);
+            rangeEnd = LocalDateTime.parse(URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8), formatter);
         } else {
             rangeEnd = null;
             rangeStart = null;
         }
+        log.info("Запрос GET /admin/events с параметрами users = {}, states = {}, categories = {}," +
+                        " rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
+                users, states, categories, rangeStartString, rangeEndString, from, size);
         return adminEventService.findAllEvents(users, states, categories,
                 rangeStart, rangeEnd, pageable);
     }

@@ -1,4 +1,4 @@
-package ru.practicum.user;
+package ru.practicum.controllers.adminUsers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.BaseClient;
+import ru.practicum.models.UserDto;
 
 @Service
 public class UserClient extends BaseClient {

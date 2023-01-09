@@ -7,6 +7,7 @@ import ru.practicum.models.EndpointHitDto;
 import ru.practicum.models.ParametersDto;
 import ru.practicum.models.ViewStatsDto;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 @RestController
@@ -17,9 +18,9 @@ public class EndpointHitController {
     private final EndpointHitService endpointHitService;
 
     @PostMapping("/hit")
-    public EndpointHitDto createHit(@RequestBody EndpointHitDto endpointHitDto) {
-        endpointHitService.save(endpointHitDto);
-        return endpointHitDto;
+    public EndpointHitDto createHit(@RequestBody @Valid EndpointHitDto endpointHitDto) {
+        log.info("Запрос POST /hit");
+        return endpointHitService.create(endpointHitDto);
     }
 
     @GetMapping("/stats")
