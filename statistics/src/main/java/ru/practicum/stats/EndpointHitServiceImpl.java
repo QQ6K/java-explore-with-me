@@ -26,18 +26,16 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     }
 
     @Override
-    public Collection<ViewStatsDto> getStat(ParametersDto parametersDto) {
-        Parameters parameters = StatMapper.fromParametersDto(parametersDto);
-        log.info("Получение статистики");
+    public Collection<ViewStatsDto> findHits(Parameters parameters) {
         if (parameters.getUnique()) {
-            return parameters.getUris().stream().map(uri -> StatMapper
-                            .fromViewStatsToDto(new ViewStats(appName, uri, repository
-                                    .getHitCountUnique(parameters.getStart(), parameters.getEnd(), uri))))
+            return parameters.getUris().stream().map(uri ->
+                    new ViewStatsDto(appName, uri, repository
+                            .getHitCountUnique(parameters.getStart(), parameters.getEnd(), uri)))
                     .collect(Collectors.toList());
         } else {
-            return parameters.getUris().stream().map(uri -> StatMapper
-                            .fromViewStatsToDto(new ViewStats(appName, uri, repository
-                                    .getHitCountAll(parameters.getStart(), parameters.getEnd(), uri))))
+            return parameters.getUris().stream().map(uri ->
+                    new ViewStatsDto(appName, uri, repository
+                            .getHitCountAll(parameters.getStart(), parameters.getEnd(), uri)))
                     .collect(Collectors.toList());
         }
     }

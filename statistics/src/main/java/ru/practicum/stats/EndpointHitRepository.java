@@ -5,16 +5,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.models.EndpointHit;
 
-import java.time.LocalDateTime;
-
 @Repository
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
-    @Query("SELECT COUNT (DISTINCT h.ip) FROM EndpointHit h" +
-            " WHERE h.uri = :uris AND h.timestamp > :start AND h.timestamp < :end " +
-            "GROUP BY h.ip")
-    Long getHitCountUnique(LocalDateTime start, LocalDateTime end, String uris);
+    @Query("SELECT  COUNT (DISTINCT hit.ip)  FROM EndpointHit hit" +
+            " WHERE hit.uri = :uris AND hit.timestamp > :start AND hit.timestamp < :end " +
+            "GROUP BY hit.ip")
+    Long getHitCountUnique(Long start, Long end, String uris);
 
-    @Query("SELECT COUNT (h.id) FROM EndpointHit h " +
-            "WHERE h.uri = :uris AND h.timestamp > :start AND h.timestamp < :end")
-    Long getHitCountAll(LocalDateTime start, LocalDateTime end, String uris);
+    @Query("SELECT COUNT (hit.id) FROM EndpointHit hit " +
+            "WHERE hit.uri = :uris AND hit.timestamp > :start AND hit.timestamp < :end")
+    Long getHitCountAll(Long start, Long end, String uris);
 }

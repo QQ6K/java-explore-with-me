@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParametersDto {
-        String start;
-        String end;
-        String[] uris;
-        Boolean unique;
+        private String start;
+        private String end;
+        private String[] uris;
+        private Boolean unique;
 }
