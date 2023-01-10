@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.BaseClient;
+
 @Service
 public class CategoriesClientP extends BaseClient {
     private static final String API_PREFIX = "/categories";
@@ -21,6 +22,7 @@ public class CategoriesClientP extends BaseClient {
                         .build()
         );
     }
+
     public ResponseEntity<Object> get(Long catId) {
         return get("/" + catId);
     }

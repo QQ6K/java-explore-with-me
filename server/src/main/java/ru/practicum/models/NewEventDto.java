@@ -25,7 +25,7 @@ public class NewEventDto {
     @NotNull(message = "Не заполнено место проведения")
     private Location location;
     private Boolean paid;
-    private Integer participantLimit;
+    private Long participantLimit;
     private Boolean requestModeration;
     @NotBlank(message = "Пустой заголовок")
     @Size(min = 3, max = 120, message = "Длина должна быть от {min} до {max} символов")

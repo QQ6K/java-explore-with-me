@@ -19,7 +19,7 @@ public class EventFullDto {
         private String annotation;
         @NotNull(message = "Пустая категория")
         private CategoryDto category;
-        private Integer confirmedRequests;
+        private Long confirmedRequests;
         private String createdOn;
         @Size(min = 20, max = 7000, message = "Длина должна быть от {min} до {max} символов")
         private String description;
@@ -31,12 +31,12 @@ public class EventFullDto {
         private Location location;
         @NotBlank(message = "Событие должно быть бесплатным или платным")
         private Boolean paid;
-        private int participantLimit;
+        private Long participantLimit;
         private String publishedOn;
         private Boolean requestModeration;
         private State state;
         @NotBlank(message = "Пустой заголовок")
         @Size(min = 3, max = 120, message = "Длина должна быть от {min} до {max} символов")
         private String title;
-        private int views;
+        private Long views;
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.WhereJoinTable;
-import ru.practicum.enums.State;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -34,12 +33,12 @@ public class Event {
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
     private Boolean paid;
-    private Integer participantLimit;
+    private Long participantLimit;
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private State state;
+    private String state;
     private String title;
-    private Integer views;
+    private Long views;
 
     @WhereJoinTable(clause = "state='CONFIRMED'")
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

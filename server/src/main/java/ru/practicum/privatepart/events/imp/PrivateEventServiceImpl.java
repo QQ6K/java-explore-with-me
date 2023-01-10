@@ -80,7 +80,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!user.getId().equals(event.getInitiator().getId())) {
             throw new WrongObjectException("Событие другого пользователя");
         }
-        if (!event.getState().equals(State.PENDING)) {
+        if (!event.getState().equals("PENDING")) {
             throw new BadRequestException("Неверный статус события id = " + event.getId());
         }
         Optional.ofNullable(updateEventRequest.getAnnotation()).ifPresent(event::setAnnotation);
@@ -126,7 +126,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public EventFullDto findEventById(HttpServletRequest request, Long eventId) {
         Event event = this.findById(eventId);
-        if (!event.getState().equals(State.PUBLISHED)) {
+        if (event.getState().equals("PUBLISHED")) {
             throw new WrongObjectException("Событие id = " + eventId + " не опубликовано");
         }
         log.debug("Поиск события id = {}", eventId);
@@ -142,8 +142,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!user.getId().equals(event.getInitiator().getId())) {
             throw new CrudException("Пользователь не автор события");
         }
-        event.setState(State.CANCELED);
-        log.debug("Event id={} has been canceled", event.getId());
+        event.setState("CANCELED");
+        log.debug("Событие id={} отменено", event.getId());
         return EventMapper.toFullDto(eventRepository.save(event));
     }
 
@@ -155,7 +155,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
             throw new CrudException("Запрет изменения статуса: модерация");
         }
-        if (!participationRequest.getState().equals(State.PENDING)) {
+        if (!participationRequest.getState().equals("PENDING")) {
             throw new CrudException("Неподходящий статус заявки");
         }
         if (!participationRequest.getEvent().getId().equals(event.getId())) {
@@ -166,10 +166,10 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         } else if (event.getParticipantLimit() - event.getParticipants().size() == 1) {
             participationRequestRepository.saveAll(participationRequestRepository
                     .findByEventIdAndState(eventId, State.PENDING).stream()
-                    .peek(e -> e.setState(State.CANCELED))
+                    .peek(e -> e.setState("CANCELED"))
                     .collect(Collectors.toList()));
         }
-        participationRequest.setState(State.CONFIRMED);
+        participationRequest.setState("CONFIRMED");
         log.debug("Подтверждено участие id={}", participationRequest.getId());
         return ParticipationRequestMapper
                 .toParticipationRequestDto(participationRequestRepository.save(participationRequest));
@@ -185,7 +185,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!participationRequest.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Несовпадение id событий");
         }
-        if (!participationRequest.getState().equals(State.PENDING)) {
+        if (!participationRequest.getState().equals("PENDING")) {
             throw new CrudException("Неподходящий статус заявки");
         }
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
@@ -196,7 +196,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (!event.getInitiator().getId().equals(user.getId())) {
             throw new WrongObjectException("Событие другого пользователя");
         }
-        participationRequest.setState(State.REJECTED);
+        participationRequest.setState("REJECTED");
         log.debug("Заявка на участие отклонена id={}", participationRequest.getId());
 
         return ParticipationRequestMapper

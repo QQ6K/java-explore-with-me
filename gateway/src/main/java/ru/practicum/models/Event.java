@@ -21,11 +21,11 @@ public class Event {
     private User initiator;
     private Location location;
     private Boolean paid;
-    private Integer participantLimit;
+    private Long participantLimit;
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
     private State state;
     private String title;
-    private Integer views;
+    private Long views;
     private Collection<User> participants;
 }

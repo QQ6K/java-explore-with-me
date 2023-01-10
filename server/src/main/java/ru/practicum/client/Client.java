@@ -9,7 +9,7 @@ import ru.practicum.models.EndpointHitDto;
 @Service
 @Slf4j
 public class Client extends ClientForStat {
-    final static private String saveHitEndpoint = "/hit";
+    private static final String saveHitEndpoint = "/hit";
 
     public Client(@Value("${explore-with-me-stat.url}") String baseUrl) {
         super(baseUrl);

@@ -3,7 +3,6 @@ package ru.practicum.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.enums.State;
 
 @Data
 @NoArgsConstructor
@@ -13,5 +12,5 @@ public class ParticipationRequestDto {
     private Long event;
     private Long id;
     private Long requester;
-    private State status;
+    private String status;
 }

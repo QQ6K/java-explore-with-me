@@ -17,6 +17,6 @@ public class UpdateEventRequest {
     @NotNull(message = "Пустое id события")
     private Long eventId;
     private Boolean paid;
-    private Integer participantLimit;
+    private Long participantLimit;
     private String title;
 }

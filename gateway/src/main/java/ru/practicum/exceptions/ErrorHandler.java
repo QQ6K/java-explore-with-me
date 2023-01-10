@@ -32,7 +32,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> BadRequestException(BadRequestException e) {
+    public Map<String, String> badRequestException(BadRequestException e) {
         log.error(e.getMessage());
         ApiError apiError = new ApiError("Ошибка",
                 null, e.getMessage(),

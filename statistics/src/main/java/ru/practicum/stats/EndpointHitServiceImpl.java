@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EndpointHitServiceImpl implements EndpointHitService{
+public class EndpointHitServiceImpl implements EndpointHitService {
     private final EndpointHitRepository repository;
     @Value("${app.name}")
     private String appName;

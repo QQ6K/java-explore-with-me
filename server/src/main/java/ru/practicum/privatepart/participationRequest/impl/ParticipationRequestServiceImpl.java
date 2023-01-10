@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.enums.State;
 import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.CrudException;
 import ru.practicum.exceptions.WrongObjectException;
@@ -23,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ru.practicum.enums.State.CANCELED;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +65,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (participationRequestRepository.findByEvent_IdAndRequesterId(event.getId(), userId) != null) {
             throw new BadRequestException("Запрос совпадает с ранее созданным");
         }
-        if (!event.getState().equals(State.PUBLISHED)) {
+        if (!event.getState().equals("PUBLISHED")) {
             throw new BadRequestException("Событие не опубликовано");
         }
         if (event.getParticipantLimit() <= event.getParticipants().size()) {
@@ -76,7 +73,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
         ParticipationRequest participationRequest = new ParticipationRequest();
         participationRequest.setRequester(user);
-        participationRequest.setState(State.PENDING);
+        participationRequest.setState("PENDING");
         participationRequest.setEvent(event);
         participationRequest.setCreated(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter));
         participationRequest = participationRequestRepository.save(participationRequest);
@@ -94,13 +91,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
             throw new CrudException("Запрет изменения статуса: модерация");
         }
-        if (!participationRequest.getState().equals(State.PENDING)) {
+        if (!participationRequest.getState().equals("PENDING")) {
             throw new CrudException("Неподходящий статус заявки");
         }
         if (!participationRequest.getRequester().getId().equals(user.getId())) {
             throw new CrudException("Событие другого пользователя");
         }
-        participationRequest.setState(CANCELED);
+        participationRequest.setState("CANCELED");
         participationRequest = participationRequestRepository.save(participationRequest);
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);
     }

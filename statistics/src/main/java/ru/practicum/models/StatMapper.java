@@ -30,7 +30,7 @@ public class StatMapper {
         return new Parameters(start, end, uris, unique);
     }
 
-    public static ViewStatsDto fromViewStatsToDto(ViewStats viewStats){
+    public static ViewStatsDto fromViewStatsToDto(ViewStats viewStats) {
         return new ViewStatsDto(viewStats.getUri(), viewStats.getUri(), viewStats.getHits());
     }
 

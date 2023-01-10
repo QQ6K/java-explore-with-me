@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.practicum.enums.State.*;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -61,10 +59,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             throw new CrudException("Публикация раньше 2 часов" +
                     event.getEventDate());
         }
-        if (!event.getState().equals(PENDING)) {
-            throw new CrudException("Статус отличается от WAITING");
+        if (!event.getState().equals("PENDING")) {
+            throw new CrudException("Статус отличается");
         }
-        event.setState(PUBLISHED);
+        event.setState("PUBLISHED");
         event.setPublishedOn(LocalDateTime.now());
         log.info("Публикация события {}, id = {}", formatter.format(LocalDateTime.now()), event.getId());
         return EventMapper.toFullDto(eventRepository.save(event));
@@ -79,10 +77,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             throw new CrudException("Публикация раньше 2 часов" +
                     event.getEventDate());
         }
-        if (!event.getState().equals(PENDING)) {
+        if (!event.getState().equals("PENDING")) {
             throw new CrudException("Статус отличается от WAITING");
         }
-        event.setState(CANCELED);
+        event.setState("CANCELED");
         log.debug("Отклонение события id = {}", eventId);
         return EventMapper.toFullDto(eventRepository.save(event));
     }
@@ -97,13 +95,16 @@ public class AdminEventServiceImpl implements AdminEventService {
                     .map(s -> s.orElseThrow(() -> new IllegalArgumentException("Неизвестный статус: " + s)))
                     .collect(Collectors.toList());
         }
-        if (rangeStart != null && rangeEnd != null) {
+        if (rangeStart != null && rangeEnd != null && statesEnum != null) {
             if (rangeStart.isAfter(rangeEnd)) {
                 throw new CrudException("Старт после завершения");
             }
             events = eventRepository.findAllEventsAdmin(users, categories,
-                            statesEnum, rangeStart, rangeEnd, pageable)
+                            states, rangeStart, rangeEnd, pageable)
                     .toList();
+        } else if (statesEnum == null) {
+            events = eventRepository.findAllEventsAdminNotRangeWithoutStates(users, categories,
+                    pageable).toList();
         } else {
             events = eventRepository.findAllEventsAdminNotRange(users, categories,
                             statesEnum, pageable)

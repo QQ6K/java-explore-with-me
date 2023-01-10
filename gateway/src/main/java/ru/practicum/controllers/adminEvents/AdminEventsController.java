@@ -54,9 +54,6 @@ public class AdminEventsController {
                                                 @RequestParam(value = "rangeEnd", required = false) String rangeEndString,
                                                 @RequestParam(value = "from", defaultValue = "0") Integer from,
                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        log.info("Запрос GET /admin/events с параметрами users = {}, states = {}, categories = {}," +
-                        " rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
-                users, states, categories, rangeStartString, rangeEndString, from, size);
         Pageable pageable;
         Long id = null;
         if (size == null || from == null) {
@@ -75,6 +72,9 @@ public class AdminEventsController {
             rangeStart = null;
         }
         String query = request.getQueryString();
+        log.info("Запрос GET /admin/events с параметрами users = {}, states = {}, categories = {}," +
+                        " rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
+                users, states, categories, rangeStartString, rangeEndString, from, size);
         return eventsClient.get(query, id);
     }
 }

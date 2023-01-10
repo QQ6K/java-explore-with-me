@@ -44,7 +44,7 @@ public class UserAdminServiceImpl implements UserAdminService {
             log.debug("Поиск всех пользователей");
             return userAdminRepository.findAll(pageable).stream()
                 .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());}
+                .collect(Collectors.toList());
+        }
     }
-
 }

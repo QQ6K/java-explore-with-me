@@ -3,7 +3,6 @@ package ru.practicum.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.enums.State;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,6 +21,6 @@ public class ParticipationRequest {
         private Long id;
         @ManyToOne
         private User requester;
-        private State state;
+        private String state;
 
 }

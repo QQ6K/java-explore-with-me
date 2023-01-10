@@ -14,6 +14,7 @@ import ru.practicum.models.AdminUpdateEventRequest;
 public class EventsClientA extends BaseClient {
 
     private static final String API_PREFIX = "/admin/events";
+
     @Autowired
     public EventsClientA(@Value("${explore-with-me-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(

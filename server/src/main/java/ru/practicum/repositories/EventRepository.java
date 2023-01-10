@@ -19,21 +19,22 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT e FROM Event e WHERE e.initiator.id IN :initiatorId AND e.category.id IN :categoryId " +
             "AND e.state IN :states AND e.eventDate > :rangeStart AND e.eventDate < :rangeEnd")
-    Page<Event> findAllEventsAdmin(Long[] initiatorId, Long[] categoryId, List<State> states,
+    Page<Event> findAllEventsAdmin(Long[] initiatorId, Long[] categoryId, String[] states,
                                    LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable);
 
     @Query(value = "SELECT e FROM Event e WHERE e.initiator.id IN :initiatorId AND e.category.id IN :categoryId " +
             "AND e.state IN :states")
     Page<Event> findAllEventsAdminNotRange(Long[] initiatorId, Long[] categoryId, List<State> states, Pageable pageable);
 
-    // @EntityGraph(attributePaths = {"category", "initiator", "participants"})
+    @Query(value = "SELECT e FROM Event e WHERE e.initiator.id IN :initiatorId AND e.category.id IN :categoryId ")
+    Page<Event> findAllEventsAdminNotRangeWithoutStates(Long[] initiatorId, Long[] categoryId, Pageable pageable);
+
     @Query(value = "SELECT e FROM Event e WHERE (LOWER(e.description) LIKE LOWER(CONCAT('%',:text,'%')) OR " +
             "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%')))" +
             "AND e.category.id IN :catIds AND e.paid = :paid AND e.eventDate > :rangeStart AND e.eventDate < :rangeEnd")
     Page<Event> findAllForPublic(String text, Long[] catIds, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                  Pageable pageable);
 
-    // @EntityGraph(attributePaths = {"category", "initiator", "participants"})
     @Query(value = "SELECT e FROM Event e WHERE (LOWER(e.description) LIKE LOWER(CONCAT('%',:text,'%')) OR " +
             "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%')))" +
             "AND e.category.id IN :catIds AND e.paid = :paid AND e.eventDate > :rangeStart AND e.eventDate < :rangeEnd" +

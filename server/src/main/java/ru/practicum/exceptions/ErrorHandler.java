@@ -39,7 +39,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> BadRequestException(BadRequestException e) {
+    public Map<String, String> badRequestException(BadRequestException e) {
         log.error(e.getMessage());
         ApiError apiError = new ApiError("Ошибка",
                 null, e.getMessage(),
@@ -48,13 +48,6 @@ public class ErrorHandler {
                 LocalDateTime.now().format(formatter).toString());
         return objectMapper.convertValue(apiError, Map.class);
     }
-
-   /* @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> validException(MethodArgumentNotValidException e) {
-        log.error(e.getMessage());
-        return Map.of("Ошибка", Objects.requireNonNull(e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
-    }*/
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)

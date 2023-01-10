@@ -14,6 +14,7 @@ import ru.practicum.models.NewCompilationDto;
 public class CompilationsClientA extends BaseClient {
 
     private static final String API_PREFIX = "/admin/compilations";
+
     @Autowired
     public CompilationsClientA(@Value("${explore-with-me-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(

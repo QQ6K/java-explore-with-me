@@ -19,12 +19,12 @@ public class EventShortDto {
     private Category category;
     @NotBlank(message = "Отсутствует дата события")
     private String eventDate;
-    private int confirmedRequests;
+    private Long confirmedRequests;
     private UserShortDto initiator;
     @NotBlank(message = "Событие должно быть бесплатным или платным")
     private Boolean paid;
     @NotBlank(message = "Пустой заголовок")
     @Size(min = 3, max = 120, message = "Длина должна быть от {min} до {max} символов")
     private String title;
-    private int views;
+    private Long views;
 }

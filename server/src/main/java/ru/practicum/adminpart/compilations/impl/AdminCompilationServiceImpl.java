@@ -14,7 +14,6 @@ import ru.practicum.models.Compilation;
 import ru.practicum.models.CompilationDto;
 import ru.practicum.models.Event;
 import ru.practicum.models.NewCompilationDto;
-import ru.practicum.privatepart.events.interfaces.PrivateEventService;
 import ru.practicum.repositories.CompilationRepository;
 
 import java.util.ArrayList;
