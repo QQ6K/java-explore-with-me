@@ -34,8 +34,12 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     public EventFullDto findById(Long eventId, String requestURI, String remoteAddr) {
         EndpointHitDto endpointHitDto = new EndpointHitDto(null, appName, requestURI, remoteAddr,
                 formatter.format(LocalDateTime.now()));
-        client.post(endpointHitDto);
-        log.debug("найти событие id={}", eventId);
+        try {
+            client.post(endpointHitDto);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+        }
+        log.debug("Поиск события событие id={}", eventId);
         return EventMapper.toFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new CrudException("id = " + eventId)));
     }
@@ -76,7 +80,8 @@ public class PublicEventsServiceImpl implements PublicEventsService {
             } catch (RuntimeException e) {
                 log.error(e.getMessage());
             }
-            return eventRepository.findAllForPublic(URLDecoder.decode(text,StandardCharsets.UTF_8), catIds, paid,
+            log.debug("Поиск событий");
+            return eventRepository.findAllForPublic(text, catIds, paid,
                             rangeStart, rangeEnd, pageable).map(EventMapper::toShortDto)
                     .toList();
         }

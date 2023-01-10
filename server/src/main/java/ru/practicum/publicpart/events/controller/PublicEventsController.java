@@ -37,7 +37,7 @@ public class PublicEventsController {
 
     @GetMapping
     public Collection<EventShortDto> findEvents(HttpServletRequest request,
-                                                @RequestParam(value = "text") String text,
+                                                @RequestParam(value = "text", required = false) String text,
                                                 @RequestParam(value = "categories", required = false) Long[] categories,
                                                 @RequestParam(value = "paid", required = false) Boolean paid,
                                                 @RequestParam(value = "rangeStart", required = false) String rangeStart,
@@ -48,12 +48,10 @@ public class PublicEventsController {
                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
         log.info("Запрос GET /events с параметрами  text = {}, categories = {}, paid = {}, rangeStart = {}," +
                         "rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
-                URLDecoder.decode(text,StandardCharsets.UTF_8),
-                categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         String clientIp = request.getRemoteAddr();
         String endpointPath = request.getRequestURI();
         Pageable pageable;
-
         if (size == null || from == null) {
             pageable = Pageable.unpaged();
         } else {
@@ -70,8 +68,11 @@ public class PublicEventsController {
                 pageable = PageRequest.of(page, size, sortPageable);
             } else pageable = PageRequest.of(page, size);
         }
+        if (text != null) {
+            text = URLDecoder.decode(text, StandardCharsets.UTF_8);
+        }
         return publicEventsService.findEvents(
-                URLDecoder.decode(text, StandardCharsets.UTF_8),
+                text,
                 categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, pageable, clientIp, endpointPath);
 

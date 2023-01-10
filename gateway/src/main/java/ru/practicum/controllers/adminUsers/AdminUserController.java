@@ -40,7 +40,7 @@ public class AdminUserController {
         if (size <= 0 || from < 0) {
             throw new BadRequestException("Ошибка параметров пагинации");
         }
-        log.info("Запрос ");
+        log.info("Запрос GET /admin/users");
         return userClient.get(ids, from, size);
     }
 }

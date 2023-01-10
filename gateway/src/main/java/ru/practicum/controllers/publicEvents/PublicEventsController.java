@@ -36,7 +36,7 @@ public class PublicEventsController {
 
     @GetMapping
     public ResponseEntity<Object> findEvents(HttpServletRequest request,
-                                             @RequestParam(value = "text") String text,
+                                             @RequestParam(value = "text", required = false) String text,
                                              @RequestParam(value = "categories", required = false) Long[] categories,
                                              @RequestParam(value = "paid", required = false) Boolean paid,
                                              @RequestParam(value = "rangeStart", required = false) String rangeStart,
@@ -67,6 +67,7 @@ public class PublicEventsController {
             } else pageable = PageRequest.of(page, size);
         }
         String query = request.getQueryString();
+        if (query == null) query = "onlyAvailable=false&from=0&size=10";
         return eventsClientPc.get(id, query);
 
     }
