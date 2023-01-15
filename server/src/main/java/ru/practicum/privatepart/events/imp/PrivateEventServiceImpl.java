@@ -64,7 +64,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public List<EventShortDto> findEventsByUserId(Long userId, Pageable pageable) {
-        User user = userAdminRepository.findById(userId).orElseThrow(() ->
+        userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
         List<Event> events = eventRepository.findByInitiator_IdOrderByEventDateDesc(userId, pageable);
         log.debug("Поиск событий, найдено {}", events.size());
@@ -76,7 +76,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public EventFullDto updateEventByUser(UpdateEventRequest updateEventRequest, Long userId) {
         User user = userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
-        Event event = eventRepository.getById(updateEventRequest.getEventId());
+        Event event = eventRepository.findById(updateEventRequest.getEventId()).orElseThrow(() ->
+                new WrongObjectException("События не существует id = " + updateEventRequest.getEventId()));
         if (!user.getId().equals(event.getInitiator().getId())) {
             throw new WrongObjectException("Событие другого пользователя");
         }

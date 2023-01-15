@@ -38,9 +38,29 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT e FROM Event e WHERE (LOWER(e.description) LIKE LOWER(CONCAT('%',:text,'%')) OR " +
             "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%')))" +
             "AND e.category.id IN :catIds AND e.paid = :paid AND e.eventDate > :rangeStart AND e.eventDate < :rangeEnd" +
-            " AND e.participants.size < e.participantLimit")
+            " AND size(e.participants) < e.participantLimit")
     Page<Event> findAllForPublicAvailable(String text, Long[] catIds, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                           Pageable pageable);
 
     List<Event> findByCategoryId(Long catId);
+
+    @Query(value = "SELECT e FROM Event e WHERE " +
+            "(:catIds is null or e.category.id IN :catIds) " +
+            "AND (:paid is null or e.paid = :paid) " +
+            "AND ((cast(:rangeStart as timestamp ) is null) or e.eventDate > :rangeStart)" +
+            "AND ((cast(:rangeEnd as timestamp ) is null) or e.eventDate < :rangeEnd)" +
+            " AND size(e.participants) < e.participantLimit " +
+            "AND e.initiator.id IN :userId")
+    Page<Event> findAllForPublicAvailableUserSubscription(Long[] userId, Long[] catIds, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                          Pageable pageable);
+
+    @Query(value = "SELECT e FROM Event e WHERE " +
+            "(:catIds is null or e.category.id IN :catIds) " +
+            "AND (:paid is null or e.paid = :paid) " +
+            "AND ((cast(:rangeStart as timestamp ) is null) or e.eventDate > :rangeStart)" +
+            "AND ((cast(:rangeEnd as timestamp ) is null) or e.eventDate < :rangeEnd)" +
+            " AND size(e.participants) < e.participantLimit " +
+            "AND e.initiator.id IN :userId")
+    Page<Event> findAllForPublicUserSubscription(Long[] userId, Long[] catIds, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                              Pageable pageable);
 }

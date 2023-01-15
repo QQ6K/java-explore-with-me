@@ -39,7 +39,6 @@ public class Event {
     private String state;
     private String title;
     private Long views;
-
     @WhereJoinTable(clause = "state='CONFIRMED'")
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "requests",
