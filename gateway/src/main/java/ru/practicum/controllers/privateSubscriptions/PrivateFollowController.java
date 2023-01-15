@@ -1,4 +1,4 @@
-package ru.practicum.controllers.featureSubscriptions;
+package ru.practicum.controllers.privateSubscriptions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class PrivateFollowController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> findFeedEvents(
-            @Valid @Positive(message = "id отрицательный или 0") @PathVariable Long userId,
+            @PathVariable @Valid @Positive(message = "id отрицательный или 0") Long userId,
             @RequestParam(name = "from", defaultValue = "0") Integer from,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "sort", required = false) String sort,

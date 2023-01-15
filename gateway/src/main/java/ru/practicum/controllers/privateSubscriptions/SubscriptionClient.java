@@ -1,4 +1,4 @@
-package ru.practicum.controllers.featureSubscriptions;
+package ru.practicum.controllers.privateSubscriptions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
