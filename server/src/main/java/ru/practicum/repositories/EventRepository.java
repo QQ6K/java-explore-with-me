@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-    List<Event> findByInitiator_IdOrderByEventDateDesc(Long id, Pageable pageable);
+    List<Event> findByInitiatorIdOrderByEventDateDesc(Long id, Pageable pageable);
 
     List<Event> findByIdIn(List<Long> ids);
 

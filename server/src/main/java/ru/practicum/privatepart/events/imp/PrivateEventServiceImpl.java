@@ -66,7 +66,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public List<EventShortDto> findEventsByUserId(Long userId, Pageable pageable) {
         userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
-        List<Event> events = eventRepository.findByInitiator_IdOrderByEventDateDesc(userId, pageable);
+        List<Event> events = eventRepository.findByInitiatorIdOrderByEventDateDesc(userId, pageable);
         log.debug("Поиск событий, найдено {}", events.size());
         return events.stream().map(EventMapper::toShortDto).collect(Collectors.toList());
     }

@@ -2,7 +2,7 @@ package ru.practicum.privatepart.subscriptions.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.exceptions.BadRequestException;
@@ -16,7 +16,6 @@ import ru.practicum.repositories.EventRepository;
 import ru.practicum.repositories.SubscriptionsRepository;
 import ru.practicum.repositories.UserAdminRepository;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,27 +34,32 @@ public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionServi
     private final UserAdminRepository userAdminRepository;
 
     @Override
-    public List<EventShortDto> getFeed(Long userId, LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                       Long[] catId, Boolean paid, Boolean onlyAvailable, Pageable pageable) {
-        userAdminRepository.findById(userId).orElseThrow(() ->
-                new WrongObjectException("Пользователя не существует id = " + userId));
-        Collection<Subscription> subscriptions = getUsersSubscriptions(userId);
+    public List<EventShortDto> getFeed(SearchParameters searchParameters) {
+        userAdminRepository.findById(searchParameters.getUserId()).orElseThrow(() ->
+                new WrongObjectException("Пользователя не существует id = " + searchParameters.getUserId()));
+        Collection<Subscription> subscriptions = getUsersSubscriptions(searchParameters.getUserId());
         Long[] tmp = new Long[0];
         Long[] feedSubs = subscriptions.stream().map(SubscriptionMapper::toLong).collect(Collectors.toList()).toArray(tmp);
-        log.debug("Лента пользователя id = {}", userId);
+        log.debug("Лента пользователя id = {}", searchParameters.getUserId());
         List<EventShortDto> eventsFeed = Collections.emptyList();
-        if (null != onlyAvailable) {
-            if (onlyAvailable) {
+        if (null != searchParameters.getOnlyAvailable()) {
+            if (searchParameters.getOnlyAvailable()) {
                 eventsFeed = eventRepository
-                        .findAllForPublicAvailableUserSubscription(feedSubs, catId, paid, rangeStart, rangeEnd, pageable)
+                        .findAllForPublicAvailableUserSubscription(
+                                feedSubs, searchParameters.getCatId(), searchParameters.getPaid(),
+                                searchParameters.getRangeStart(), searchParameters.getRangeEnd(), searchParameters.getPageable())
                         .stream().map(EventMapper::toShortDto).collect(Collectors.toList());
             } else {
                 eventsFeed = eventRepository
-                        .findAllForPublicUserSubscription(feedSubs, catId, paid, rangeStart, rangeEnd, pageable)
+                        .findAllForPublicUserSubscription(
+                                feedSubs, searchParameters.getCatId(), searchParameters.getPaid(),
+                                searchParameters.getRangeStart(), searchParameters.getRangeEnd(), searchParameters.getPageable())
                         .stream().map(EventMapper::toShortDto).collect(Collectors.toList());
             }
         } else eventsFeed = eventRepository
-                .findAllForPublicUserSubscription(feedSubs, catId, paid, rangeStart, rangeEnd, pageable)
+                .findAllForPublicUserSubscription(
+                        feedSubs, searchParameters.getCatId(), searchParameters.getPaid(),
+                        searchParameters.getRangeStart(), searchParameters.getRangeEnd(), searchParameters.getPageable())
                 .stream().map(EventMapper::toShortDto).collect(Collectors.toList());
         return eventsFeed;
     }
@@ -75,7 +79,7 @@ public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionServi
                 new WrongObjectException("Пользователя не существует id = " + userId));
         Subscription subscription = new Subscription(new SubscriptionId(userId, subscriptionId));
         if (null != subscriptionsRepository.findByUserIdAndSubId(userId,subscriptionId)) {
-            throw new BadRequestException("Подписка уже существует");
+            throw new DataIntegrityViolationException("Подписка уже существует");
         }
         subscription = subscriptionsRepository.save(subscription);
         log.debug("Подписки пользователя id = {}", userId);
@@ -133,6 +137,4 @@ public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionServi
         user = userAdminRepository.save(user);
         return UserMapper.toUserDto(user);
     }
-
-
 }

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.enums.SortEvent;
 import ru.practicum.models.EventShortDto;
+import ru.practicum.models.SearchParameters;
 import ru.practicum.models.Subscription;
 import ru.practicum.models.UserDto;
 import ru.practicum.privatepart.subscriptions.interfaces.PrivateSubscriptionService;
@@ -29,7 +30,7 @@ import static ru.practicum.enums.SortEvent.VIEWS;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class PrivateFollowController {
+public class PrivateSubscriptionController {
 
     private final PrivateSubscriptionService privateSubscriptionService;
 
@@ -74,7 +75,15 @@ public class PrivateFollowController {
         log.info("Запрос GET /feed/{} с параметрами " +
                         "rangeStart = {}, rangeEnd = {}, catId = {}, paid = {}, from = {}, size = {}, sort = {}", userId,
                 rangeStartString, rangeEndString, catId, paid, from, size, sort);
-        return privateSubscriptionService.getFeed(userId, rangeStart, rangeEnd, catId, paid, onlyAvailable, pageable);
+        SearchParameters searchParameters = new SearchParameters();
+        searchParameters.setUserId(userId);
+        searchParameters.setCatId(catId);
+        searchParameters.setRangeStart(rangeStart);
+        searchParameters.setRangeEnd(rangeEnd);
+        searchParameters.setPageable(pageable);
+        searchParameters.setOnlyAvailable(onlyAvailable);
+        searchParameters.setPaid(paid);
+        return privateSubscriptionService.getFeed(searchParameters);
     }
 
     @PostMapping("/{userId}/subscription/{subscriptionId}")
