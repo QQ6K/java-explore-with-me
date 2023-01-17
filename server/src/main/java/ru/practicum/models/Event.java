@@ -1,16 +1,15 @@
 package ru.practicum.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "events")
 @NoArgsConstructor
 @AllArgsConstructor
