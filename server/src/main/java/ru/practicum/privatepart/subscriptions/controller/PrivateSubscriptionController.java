@@ -15,10 +15,6 @@ import ru.practicum.models.UserDto;
 import ru.practicum.privatepart.subscriptions.interfaces.PrivateSubscriptionService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +30,6 @@ public class PrivateSubscriptionController {
 
     private final PrivateSubscriptionService privateSubscriptionService;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping("/{userId}")
     public List<EventShortDto> findFeedEvents(
@@ -49,40 +44,18 @@ public class PrivateSubscriptionController {
             @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
             HttpServletRequest request
     ) {
-        Pageable pageable;
-        if (size == null || from == null) {
-            pageable = Pageable.unpaged();
-        } else {
-            int page = from / size;
-            Sort sortPageable;
-            if (sort != null) {
-                SortEvent sortEvent = SortEvent.from(sort);
-                if (sortEvent == EVENT_DATE) {
-                    sort = "eventDate";
-                } else if (sortEvent == VIEWS) {
-                    sort = "view";
-                }
-                sortPageable = Sort.by(sort).descending();
-                pageable = PageRequest.of(page, size, sortPageable);
-            } else pageable = PageRequest.of(page, size);
-        }
-        LocalDateTime rangeStart = null;
-        LocalDateTime rangeEnd = null;
-        if (rangeEndString != null && rangeStartString != null) {
-            rangeStart = LocalDateTime.parse(URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8), formatter);
-            rangeEnd = LocalDateTime.parse(URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8), formatter);
-        }
-        log.info("Запрос GET /feed/{} с параметрами " +
-                        "rangeStart = {}, rangeEnd = {}, catId = {}, paid = {}, from = {}, size = {}, sort = {}", userId,
-                rangeStartString, rangeEndString, catId, paid, from, size, sort);
+        Pageable pageable = doPageable(from, size, sort);
         SearchParameters searchParameters = new SearchParameters();
         searchParameters.setUserId(userId);
         searchParameters.setCatId(catId);
-        searchParameters.setRangeStart(rangeStart);
-        searchParameters.setRangeEnd(rangeEnd);
+        searchParameters.setRangeStart(rangeStartString);
+        searchParameters.setRangeEnd(rangeEndString);
         searchParameters.setPageable(pageable);
         searchParameters.setOnlyAvailable(onlyAvailable);
         searchParameters.setPaid(paid);
+        log.info("Запрос GET /feed/{} с параметрами " +
+                        "rangeStart = {}, rangeEnd = {}, catId = {}, paid = {}, from = {}, size = {}, sort = {}", userId,
+                rangeStartString, rangeEndString, catId, paid, from, size, sort);
         return privateSubscriptionService.getFeed(searchParameters);
     }
 
@@ -131,5 +104,26 @@ public class PrivateSubscriptionController {
     ) {
         log.info("Запрос POST /feed/{}/subscription/unlock", userId);
         return privateSubscriptionService.unlockUserSubscription(userId);
+    }
+
+    private Pageable doPageable(Integer from, Integer size, String sort) {
+        Pageable pageable;
+        if (size == null || from == null) {
+            pageable = Pageable.unpaged();
+        } else {
+            int page = from / size;
+            Sort sortPageable;
+            if (sort != null) {
+                SortEvent sortEvent = SortEvent.from(sort);
+                if (sortEvent == EVENT_DATE) {
+                    sort = "eventDate";
+                } else if (sortEvent == VIEWS) {
+                    sort = "view";
+                }
+                sortPageable = Sort.by(sort).descending();
+                pageable = PageRequest.of(page, size, sortPageable);
+            } else pageable = PageRequest.of(page, size);
+        }
+        return pageable;
     }
 }

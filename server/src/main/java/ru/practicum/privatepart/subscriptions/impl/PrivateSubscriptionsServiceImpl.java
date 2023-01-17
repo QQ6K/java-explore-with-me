@@ -78,7 +78,7 @@ public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionServi
         userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
         Subscription subscription = new Subscription(new SubscriptionId(userId, subscriptionId));
-        if (null != subscriptionsRepository.findByUserIdAndSubId(userId,subscriptionId)) {
+        if (null != subscriptionsRepository.findByUserIdAndSubId(userId, subscriptionId)) {
             throw new DataIntegrityViolationException("Подписка уже существует");
         }
         subscription = subscriptionsRepository.save(subscription);
@@ -105,10 +105,10 @@ public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionServi
 
     @Override
     public Collection<Subscription> getUsersSubscriptions(Long userId) {
-        log.debug("Получить подписки пользователя id = {}", userId);
         userAdminRepository.findById(userId).orElseThrow(() ->
                 new WrongObjectException("Пользователя не существует id = " + userId));
         Collection<Subscription> subscription = subscriptionsRepository.findByUser_id(userId);
+        log.debug("Получить подписки пользователя id = {}", userId);
         return subscription;
     }
 

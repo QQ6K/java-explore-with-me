@@ -1,8 +1,6 @@
 package ru.practicum.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -10,7 +8,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "subscriptions")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Subscription {
