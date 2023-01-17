@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 public class PrivateSubscriptionsServiceImpl implements PrivateSubscriptionService {
+
     private final EventRepository eventRepository;
 
     private final SubscriptionsRepository subscriptionsRepository;
