@@ -13,10 +13,6 @@ import ru.practicum.enums.SortEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static ru.practicum.enums.SortEvent.EVENT_DATE;
 import static ru.practicum.enums.SortEvent.VIEWS;
@@ -26,8 +22,7 @@ import static ru.practicum.enums.SortEvent.VIEWS;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class PrivateFollowController {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+public class PrivateSubscriptionController {
 
     private final SubscriptionClient subscriptionClient;
 
@@ -44,33 +39,10 @@ public class PrivateFollowController {
             @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
             HttpServletRequest request
     ) {
-        Pageable pageable;
-        if (size == null || from == null) {
-            pageable = Pageable.unpaged();
-        } else {
-            int page = from / size;
-            Sort sortPageable;
-            if (sort != null) {
-                SortEvent sortEvent = SortEvent.from(sort);
-                if (sortEvent == EVENT_DATE) {
-                    sort = "eventDate";
-                } else if (sortEvent == VIEWS) {
-                    sort = "view";
-                }
-                sortPageable = Sort.by(sort).descending();
-                pageable = PageRequest.of(page, size, sortPageable);
-            } else pageable = PageRequest.of(page, size);
-        }
-        LocalDateTime rangeStart = null;
-        LocalDateTime rangeEnd = null;
-        if (rangeEndString != null && rangeStartString != null) {
-            rangeStart = LocalDateTime.parse(URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8), formatter);
-            rangeEnd = LocalDateTime.parse(URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8), formatter);
-        }
         log.info("Запрос GET /feed/{} с параметрами " +
                         "rangeStart = {}, rangeEnd = {}, catId = {}, paid = {}, from = {}, size = {}," +
                         " sort = {}, onlyAvailable = {}",
-                userId, rangeStart, rangeEnd, catId, paid, from, size, sort, onlyAvailable);
+                userId, rangeStartString, rangeEndString, catId, paid, from, size, sort, onlyAvailable);
         return subscriptionClient.get(userId, request.getQueryString());
     }
 
@@ -119,6 +91,27 @@ public class PrivateFollowController {
     ) {
         log.info("Запрос POST /feed/{}/subscription/unlock", userId);
         return subscriptionClient.delete(userId);
+    }
+
+    private Pageable doPageable(Integer from, Integer size, String sort) {
+        Pageable pageable;
+        if (size == null || from == null) {
+            pageable = Pageable.unpaged();
+        } else {
+            int page = from / size;
+            Sort sortPageable;
+            if (sort != null) {
+                SortEvent sortEvent = SortEvent.from(sort);
+                if (sortEvent == EVENT_DATE) {
+                    sort = "eventDate";
+                } else if (sortEvent == VIEWS) {
+                    sort = "view";
+                }
+                sortPageable = Sort.by(sort).descending();
+                pageable = PageRequest.of(page, size, sortPageable);
+            } else pageable = PageRequest.of(page, size);
+        }
+        return pageable;
     }
 
 }
