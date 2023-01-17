@@ -28,7 +28,7 @@ public class PrivateSubscriptionController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> findFeedEvents(
-            @PathVariable @Valid @Positive(message = "id отрицательный или 0") Long userId,
+            @PathVariable @Valid @Positive(message = "id отрицательный или =0") Long userId,
             @RequestParam(name = "from", defaultValue = "0") Integer from,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "sort", required = false) String sort,
