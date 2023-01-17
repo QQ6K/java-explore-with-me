@@ -10,7 +10,7 @@ public class UserMapper {
     }
 
     public static User fromUserDto(UserDto dto) {
-        return new User(dto.getId(), dto.getEmail(),dto.getName());
+        return new User(dto.getId(), dto.getEmail(),dto.getName(),false);
     }
 
     public static UserDto toUserDto(User user) {
